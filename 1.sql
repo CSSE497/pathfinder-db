@@ -1,7 +1,7 @@
 # --- !Ups
 create table cluster (
   id                        bigserial not null,
-  authentication_token      varchar(255),
+  authentication_token      bytea not null,
   constraint pk_cluster primary key (id))
 ;
 
