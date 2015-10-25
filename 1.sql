@@ -1,5 +1,4 @@
 # --- !Ups
-
 create table cluster (
   id                        bigserial not null,
   authentication_token      varchar(255),
@@ -20,9 +19,16 @@ create table commodity (
 create table pathfinder_application (
   id                        varchar(40) not null,
   name                      varchar(255),
-  token                     varchar(255),
+  token                     bytea not null,
   cluster_id                bigint,
   constraint pk_pathfinder_application primary key (id))
+;
+
+create table pathfinder_user (
+  username                  varchar(255) not null,
+  password                  varchar(255) not null,
+  user_token                bytea not null,
+  constraint pk_pathfinder_user primary key (username))
 ;
 
 create table vehicle (
@@ -41,8 +47,6 @@ create index ix_pathfinder_application_clus_2 on pathfinder_application (cluster
 alter table vehicle add constraint fk_vehicle_cluster_3 foreign key (cluster_id) references cluster (id);
 create index ix_vehicle_cluster_3 on vehicle (cluster_id);
 
-
-
 # --- !Downs
 
 drop table if exists cluster cascade;
@@ -51,5 +55,6 @@ drop table if exists commodity cascade;
 
 drop table if exists pathfinder_application cascade;
 
-drop table if exists vehicle cascade;
+drop table if exists pathfinder_user cascade;
 
+drop table if exists vehicle cascade;
