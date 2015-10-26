@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+username="postgres"
+dbhost="162.222.177.187"
+dbname="pathfinderdb"
+
+
+if [ $# -ne 1 ]
+then echo "usage: dbutils [restore|save]"; exit
+fi
+
+if [ $1 == "save" ]
+then
+	echo "drop schema public cascade;" > ./restore.sql
+	echo "create schema public;" >> ./restore.sql
+	pg_dump -h $dbhost -d $dbname -U $username >> ./restore.sql
+	echo "Database Saved"
+	exit
+fi
+
+if [ $1 == "restore" ]
+then
+	psql -h $dbhost -d $dbname -U $username < ./restore.sql
+	echo "Database Restored"
+	exit
+fi
+
+echo "usage: dbutils [restore|save]"; exit
