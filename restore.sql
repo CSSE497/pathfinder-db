@@ -274,7 +274,6 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 
 COPY vehicle (id, latitude, longitude, capacity, cluster_id) FROM stdin;
 1	39.478768	-87.332829	3	1
-2	39.483484	-87.322498	2	1
 \.
 
 
