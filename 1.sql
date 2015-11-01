@@ -11,6 +11,7 @@ create table commodity (
   startLongitude            float not null,
   endLatitude               float not null,
   endLongitude              float not null,
+  status                    integer not null,
   param                     integer,
   cluster_id                bigint,
   constraint pk_commodity primary key (id))
