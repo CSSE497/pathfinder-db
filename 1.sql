@@ -36,6 +36,7 @@ create table vehicle (
   latitude                  float not null,
   longitude                 float not null,
   capacity                  integer not null,
+  status                    integer not null,
   cluster_id                bigint,
   constraint pk_vehicle primary key (id))
 ;
