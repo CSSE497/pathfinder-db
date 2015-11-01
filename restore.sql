@@ -225,13 +225,13 @@ SELECT pg_catalog.setval('cluster_id_seq', 1, true);
 --
 
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, param, cluster_id) FROM stdin;
-1	39.481514	-87.314177	39.475463	-87.348709	3	1
-2	39.442379	-87.339061	39.481638	-87.321101	2	1
-3	39.499310	-87.379114	39.515997	-87.358686	1	1
-4	39.492024	-87.448465	39.433446	-87.413446	1	1
-5	39.491497	-87.314532	39.491961	-87.363113	1	1
-6	39.404953	-87.317605	39.470446	-87.414422	2	1
-7	39.458784	-87.406869	39.448445	-87.334428	1	1
+1	39.4815139999999971	-87.3141770000000008	39.4754629999999977	-87.3487089999999995	3	1
+2	39.4423790000000025	-87.3390610000000009	39.4816379999999967	-87.3211009999999987	2	1
+3	39.4993100000000013	-87.3791140000000013	39.5159969999999987	-87.3586860000000058	1	1
+4	39.4920240000000007	-87.4484649999999988	39.4334460000000036	-87.4134459999999933	1	1
+5	39.4914970000000025	-87.3145319999999998	39.4919610000000034	-87.3631129999999985	1	1
+6	39.404952999999999	-87.3176050000000004	39.4704460000000026	-87.4144220000000018	2	1
+7	39.4587840000000014	-87.4068690000000004	39.4484449999999995	-87.3344280000000026	1	1
 \.
 
 
@@ -256,7 +256,6 @@ COPY pathfinder_application (id, name, token, cluster_id) FROM stdin;
 --
 
 COPY pathfinder_user (username, password, user_token) FROM stdin;
-test test \\xweiucnweufvwecacasfc
 \.
 
 
@@ -265,7 +264,7 @@ test test \\xweiucnweufvwecacasfc
 --
 
 COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, last_problem) FROM stdin;
-1	61ef40efa6afa31572cb7c2a9acff50da32fd1c4	2015-10-25 00:00:00	create table cluster (\nid                        bigserial not null,\nauthentication_token      bytea not null,\nconstraint pk_cluster primary key (id))\n;\n\ncreate table commodity (\nid                        bigserial not null,\nstartLatitude             float not null,\nstartLongitude            float not null,\nendLatitude               float not null,\nendLongitude              float not null,\nparam                     integer,\ncluster_id                bigint,\nconstraint pk_commodity primary key (id))\n;\n\ncreate table pathfinder_application (\nid                        varchar(40) not null,\nname                      varchar(255),\ntoken                     bytea not null,\ncluster_id                bigint,\nconstraint pk_pathfinder_application primary key (id))\n;\n\ncreate table pathfinder_user (\nusername                  varchar(255) not null,\npassword                  varchar(255) not null,\nuser_token                bytea not null,\nconstraint pk_pathfinder_user primary key (username))\n;\n\ncreate table vehicle (\nid                        bigserial not null,\nlatitude                  float not null,\nlongitude                 float not null,\ncapacity                  integer not null,\nstatus                integer not null,\ncluster_id                bigint,\nconstraint pk_vehicle primary key (id))\n;\n\nalter table commodity add constraint fk_commodity_cluster_1 foreign key (cluster_id) references cluster (id);\ncreate index ix_commodity_cluster_1 on commodity (cluster_id);\nalter table pathfinder_application add constraint fk_pathfinder_application_clus_2 foreign key (cluster_id) references cluster (id);\ncreate index ix_pathfinder_application_clus_2 on pathfinder_application (cluster_id);\nalter table vehicle add constraint fk_vehicle_cluster_3 foreign key (cluster_id) references cluster (id);\ncreate index ix_vehicle_cluster_3 on vehicle (cluster_id);	drop table if exists cluster cascade;\n\ndrop table if exists commodity cascade;\n\ndrop table if exists pathfinder_application cascade;\n\ndrop table if exists pathfinder_user cascade;\n\ndrop table if exists vehicle cascade;	applied	
+1	e800e6e76179c5a89731347851d3b70926891cf9	2015-11-01 00:00:00	create table cluster (\nid                        bigserial not null,\nauthentication_token      bytea not null,\nconstraint pk_cluster primary key (id))\n;\n\ncreate table commodity (\nid                        bigserial not null,\nstartLatitude             float not null,\nstartLongitude            float not null,\nendLatitude               float not null,\nendLongitude              float not null,\nparam                     integer,\ncluster_id                bigint,\nconstraint pk_commodity primary key (id))\n;\n\ncreate table pathfinder_application (\nid                        varchar(40) not null,\nname                      varchar(255),\ntoken                     bytea not null,\ncluster_id                bigint,\nconstraint pk_pathfinder_application primary key (id))\n;\n\ncreate table pathfinder_user (\nusername                  varchar(255) not null,\npassword                  varchar(255) not null,\nuser_token                bytea not null,\nconstraint pk_pathfinder_user primary key (username))\n;\n\ncreate table vehicle (\nid                        bigserial not null,\nlatitude                  float not null,\nlongitude                 float not null,\ncapacity                  integer not null,\nstatus                    integer not null,\ncluster_id                bigint,\nconstraint pk_vehicle primary key (id))\n;\n\nalter table commodity add constraint fk_commodity_cluster_1 foreign key (cluster_id) references cluster (id);\ncreate index ix_commodity_cluster_1 on commodity (cluster_id);\nalter table pathfinder_application add constraint fk_pathfinder_application_clus_2 foreign key (cluster_id) references cluster (id);\ncreate index ix_pathfinder_application_clus_2 on pathfinder_application (cluster_id);\nalter table vehicle add constraint fk_vehicle_cluster_3 foreign key (cluster_id) references cluster (id);\ncreate index ix_vehicle_cluster_3 on vehicle (cluster_id);	drop table if exists cluster cascade;\n\ndrop table if exists commodity cascade;\n\ndrop table if exists pathfinder_application cascade;\n\ndrop table if exists pathfinder_user cascade;\n\ndrop table if exists vehicle cascade;	applied	
 \.
 
 
@@ -274,7 +273,7 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 --
 
 COPY vehicle (id, latitude, longitude, capacity, status, cluster_id) FROM stdin;
-1	39.478768	-87.332829	3	1	1
+1	39.4787680000000023	-87.3328290000000038	3	1	1
 \.
 
 
