@@ -155,6 +155,7 @@ CREATE TABLE vehicle (
     latitude double precision NOT NULL,
     longitude double precision NOT NULL,
     capacity integer NOT NULL,
+    status integer NOT NULL,
     cluster_id bigint
 );
 
@@ -264,7 +265,7 @@ test test \\xweiucnweufvwecacasfc
 --
 
 COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, last_problem) FROM stdin;
-1	61ef40efa6afa31572cb7c2a9acff50da32fd1c4	2015-10-25 00:00:00	create table cluster (\nid                        bigserial not null,\nauthentication_token      bytea not null,\nconstraint pk_cluster primary key (id))\n;\n\ncreate table commodity (\nid                        bigserial not null,\nstartLatitude             float not null,\nstartLongitude            float not null,\nendLatitude               float not null,\nendLongitude              float not null,\nparam                     integer,\ncluster_id                bigint,\nconstraint pk_commodity primary key (id))\n;\n\ncreate table pathfinder_application (\nid                        varchar(40) not null,\nname                      varchar(255),\ntoken                     bytea not null,\ncluster_id                bigint,\nconstraint pk_pathfinder_application primary key (id))\n;\n\ncreate table pathfinder_user (\nusername                  varchar(255) not null,\npassword                  varchar(255) not null,\nuser_token                bytea not null,\nconstraint pk_pathfinder_user primary key (username))\n;\n\ncreate table vehicle (\nid                        bigserial not null,\nlatitude                  float not null,\nlongitude                 float not null,\ncapacity                  integer not null,\ncluster_id                bigint,\nconstraint pk_vehicle primary key (id))\n;\n\nalter table commodity add constraint fk_commodity_cluster_1 foreign key (cluster_id) references cluster (id);\ncreate index ix_commodity_cluster_1 on commodity (cluster_id);\nalter table pathfinder_application add constraint fk_pathfinder_application_clus_2 foreign key (cluster_id) references cluster (id);\ncreate index ix_pathfinder_application_clus_2 on pathfinder_application (cluster_id);\nalter table vehicle add constraint fk_vehicle_cluster_3 foreign key (cluster_id) references cluster (id);\ncreate index ix_vehicle_cluster_3 on vehicle (cluster_id);	drop table if exists cluster cascade;\n\ndrop table if exists commodity cascade;\n\ndrop table if exists pathfinder_application cascade;\n\ndrop table if exists pathfinder_user cascade;\n\ndrop table if exists vehicle cascade;	applied	
+1	61ef40efa6afa31572cb7c2a9acff50da32fd1c4	2015-10-25 00:00:00	create table cluster (\nid                        bigserial not null,\nauthentication_token      bytea not null,\nconstraint pk_cluster primary key (id))\n;\n\ncreate table commodity (\nid                        bigserial not null,\nstartLatitude             float not null,\nstartLongitude            float not null,\nendLatitude               float not null,\nendLongitude              float not null,\nparam                     integer,\ncluster_id                bigint,\nconstraint pk_commodity primary key (id))\n;\n\ncreate table pathfinder_application (\nid                        varchar(40) not null,\nname                      varchar(255),\ntoken                     bytea not null,\ncluster_id                bigint,\nconstraint pk_pathfinder_application primary key (id))\n;\n\ncreate table pathfinder_user (\nusername                  varchar(255) not null,\npassword                  varchar(255) not null,\nuser_token                bytea not null,\nconstraint pk_pathfinder_user primary key (username))\n;\n\ncreate table vehicle (\nid                        bigserial not null,\nlatitude                  float not null,\nlongitude                 float not null,\ncapacity                  integer not null,\nstatus                integer not null,\ncluster_id                bigint,\nconstraint pk_vehicle primary key (id))\n;\n\nalter table commodity add constraint fk_commodity_cluster_1 foreign key (cluster_id) references cluster (id);\ncreate index ix_commodity_cluster_1 on commodity (cluster_id);\nalter table pathfinder_application add constraint fk_pathfinder_application_clus_2 foreign key (cluster_id) references cluster (id);\ncreate index ix_pathfinder_application_clus_2 on pathfinder_application (cluster_id);\nalter table vehicle add constraint fk_vehicle_cluster_3 foreign key (cluster_id) references cluster (id);\ncreate index ix_vehicle_cluster_3 on vehicle (cluster_id);	drop table if exists cluster cascade;\n\ndrop table if exists commodity cascade;\n\ndrop table if exists pathfinder_application cascade;\n\ndrop table if exists pathfinder_user cascade;\n\ndrop table if exists vehicle cascade;	applied	
 \.
 
 
@@ -272,8 +273,8 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 -- Data for Name: vehicle; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY vehicle (id, latitude, longitude, capacity, cluster_id) FROM stdin;
-1	39.478768	-87.332829	3	1
+COPY vehicle (id, latitude, longitude, capacity, status, cluster_id) FROM stdin;
+1	39.478768	-87.332829	3	1	1
 \.
 
 
