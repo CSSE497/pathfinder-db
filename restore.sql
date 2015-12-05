@@ -199,8 +199,8 @@ ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::r
 -- Data for Name: cluster; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY cluster (id, authentication_token) FROM stdin;
-1	\\x746f7020736563726574
+COPY cluster (id, parent_id, authentication_token) FROM stdin;
+1	\N	\\x746f7020736563726574
 \.
 
 
