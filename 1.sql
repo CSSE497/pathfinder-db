@@ -88,7 +88,7 @@ CREATE SEQUENCE pathfinder_user_id_seq
 
 ALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;
 
-ALTER SEQUENCE commodity_id_seq OWNED BY commodity.id;
+ALTER SEQUENCE commodity_id_seq OWNED BY pathfinder_user.id;
 
 
 CREATE TABLE vehicle (
