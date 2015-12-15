@@ -70,6 +70,27 @@ CREATE TABLE pathfinder_application (
 
 ALTER TABLE pathfinder_application OWNER TO pathfinderwebserver;
 
+CREATE TABLE pathfinder_user (
+    username character varying(255) NOT NULL,
+    password character varrying(255) NOT NULL,
+    user_token bytea NOT NULL
+);
+
+
+ALTER TABLE pathfinder_user OWNER TO pathfinderwebserver;
+
+CREATE SEQUENCE pathfinder_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;
+
+ALTER SEQUENCE commodity_id_seq OWNED BY pathfinder_user.id;
+
+
 CREATE TABLE vehicle (
     id bigint NOT NULL,
     latitude double precision NOT NULL,
@@ -102,6 +123,9 @@ ALTER TABLE ONLY cluster ALTER COLUMN id SET DEFAULT nextval('cluster_id_seq'::r
 ALTER TABLE ONLY commodity ALTER COLUMN id SET DEFAULT nextval('commodity_id_seq'::regclass);
 
 
+ALTER TABLE ONLY pathfinder_user ALTER COLUMN id set DEFAULT nextval('pathfinder_user_id_seq'::regclass);
+
+
 ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::regclass);
 
 
@@ -109,8 +133,9 @@ SELECT pg_catalog.setval('cluster_id_seq', 1, false);
 
 SELECT pg_catalog.setval('commodity_id_seq', 1, false);
 
+SELECT pg_catalog.setval('pathfinder_user_id_seq', 1, false);
 
-SELECT pg_catalog.setval('vehicle_id_seq', 8, false);
+SELECT pg_catalog.setval('vehicle_id_seq', 1, false);
 
 
 ALTER TABLE ONLY cluster
@@ -124,6 +149,8 @@ ALTER TABLE ONLY commodity
 ALTER TABLE ONLY pathfinder_application
     ADD CONSTRAINT pk_pathfinder_application PRIMARY KEY (id);
 
+ALTER TABLE ONLY pathfinder_user
+    ADD CONSTRAINT pk_pathfinder_user PRIMARY KEY (id);
 
 ALTER TABLE ONLY vehicle
     ADD CONSTRAINT pk_vehicle PRIMARY KEY (id);
@@ -177,6 +204,8 @@ drop table if exists cluster;
 drop table if exists commodity;
 
 drop table if exists pathfinder_application;
+
+drop table if exists pathfinder_user;
 
 drop table if exists vehicle;
 
