@@ -216,8 +216,10 @@ SELECT pg_catalog.setval('cluster_id_seq', 1, true);
 --
 
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, cluster_id) FROM stdin;
-1	39.4819999999999993	-87.3282999999999987	39.4420000000000002	-87.3399000000000001	0	{"capacity":1}	1
-2	39.4617000000000004	-87.3033999999999963	39.4836000000000027	-87.3262	0	{"capacity":1}	1
+1	39.3875	-87.1106	39.7160	-86.2964	0	{"capacity":1}	1
+2	39.8020	-86.2790	41.5828	-87.3463	0	{"capacity":1}	1
+3	39.1695	-86.5185	39.2073	-85.9244	0	{"capacity":1}	1
+4	42.5844	-88.4770	41.8534	-87.6519	0	{"capacity":1}	1
 \.
 
 
@@ -251,8 +253,8 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 --
 
 COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
-8	39.4438000000000031	-87.3392999999999944	1	0	{"capacity":1}
-12	39.4437130820373483	-87.3394701071896975	1	1	{"chimney":1}
+14	39.4437130820373483	-87.3394701071896975	1	1	{"capacity":1}
+15	42.1863	-88.1088	1	1	{"capacity":1}
 \.
 
 
@@ -260,7 +262,7 @@ COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
 -- Name: vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('vehicle_id_seq', 12, true);
+SELECT pg_catalog.setval('vehicle_id_seq', 16, true);
 
 
 --
