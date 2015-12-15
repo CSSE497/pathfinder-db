@@ -216,8 +216,8 @@ SELECT pg_catalog.setval('cluster_id_seq', 1, true);
 --
 
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, cluster_id) FROM stdin;
-1	39.4819999999999993	-87.3282999999999987	39.4420000000000002	-87.3399000000000001	0	{}	1
-2	39.4617000000000004	-87.3033999999999963	39.4836000000000027	-87.3262	0	{}	1
+1	39.4819999999999993	-87.3282999999999987	39.4420000000000002	-87.3399000000000001	0	{"capacity":1}	1
+2	39.4617000000000004	-87.3033999999999963	39.4836000000000027	-87.3262	0	{"capacity":1}	1
 \.
 
 
@@ -225,12 +225,16 @@ COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, st
 -- Name: commodity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
+SELECT pg_catalog.setval('commodity_id_seq', 6, true);
+
+
+--
+-- Data for Name: pathfinder_application; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
 COPY pathfinder_application (id, name, token, cluster_id) FROM stdin;
 9c4166bb-9535-49e1-8844-1904a0b1f45b	Chimney Swap	\\xefbfbdefbfbdefbfbdefbfbd0a2aefbfbdefbfbd55efbfbd6750efbfbd45efbfbd5befbfbd7333efbfbd27efbfbd34efbfbd14efbfbd51efbfbd524eefbfbd70efbfbd7defbfbd317a173334341912efbfbdefbfbd6defbfbd073befbfbd00efbfbdefbfbdefbfbdefbfbd6c5e6c1defbfbd30efbfbdefbfbd2fefbfbdefbfbd3defbfbd77efbfbd271909efbfbdefbfbd5aefbfbd3307efbfbd3befbfbdefbfbdefbfbd7f527512efbfbd1843efbfbd7fefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd4fefbfbdefbfbdefbfbd7365efbfbdefbfbd49efbfbd7f1c171eefbfbd3e4fefbfbdefbfbdefbfbdefbfbd724e526232422defbfbdefbfbd3257efbfbdefbfbdefbfbd5b59efbfbd643b6befbfbd1eefbfbdefbfbd21efbfbdefbfbdefbfbd237cefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd5befbfbd5d6eefbfbd08efbfbdefbfbdefbfbd3c72efbfbdefbfbdefbfbdefbfbd77efbfbdefbfbd76efbfbd73efbfbd2cefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd7465efbfbd70efbfbdefbfbdefbfbd23efbfbd4a7aefbfbdefbfbdefbfbd26efbfbd752f2aefbfbdefbfbdefbfbd15efbfbd7defbfbd35efbfbdefbfbd0aefbfbdefbfbdefbfbd7506efbfbd5aefbfbd1eefbfbdefbfbd5f187515efbfbd2849efbfbd5800efbfbdefbfbdefbfbd7c102966efbfbd5befbfbdefbfbdefbfbd4cefbfbdefbfbdefbfbdefbfbd134e	1
 \.
-
-SELECT pg_catalog.setval('commodity_id_seq', 2, true);
-
 
 
 --
@@ -247,7 +251,8 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 --
 
 COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
-8	39.4438000000000031	-87.3392999999999944	1	0	{}
+8	39.4438000000000031	-87.3392999999999944	1	0	{"capacity":1}
+12	39.4437130820373483	-87.3394701071896975	1	1	{"chimney":1}
 \.
 
 
@@ -255,7 +260,7 @@ COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
 -- Name: vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('vehicle_id_seq', 8, true);
+SELECT pg_catalog.setval('vehicle_id_seq', 12, true);
 
 
 --
@@ -358,9 +363,24 @@ ALTER TABLE ONLY vehicle
     ADD CONSTRAINT fk_vehicle_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: -; Owner: pathfinderwebserver
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver REVOKE ALL ON TABLES  FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver REVOKE ALL ON TABLES  FROM pathfinderwebserver;
+ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver GRANT ALL ON TABLES  TO pathfinderwebserver;
+ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver GRANT ALL ON TABLES  TO PUBLIC;
 
 
 --
