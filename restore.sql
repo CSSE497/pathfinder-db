@@ -32,6 +32,55 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: application; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE TABLE application (
+    id character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    customer_email character varying(255),
+    cluster_id bigint NOT NULL,
+    objective_function_id character varying(255) NOT NULL
+);
+
+
+ALTER TABLE application OWNER TO pathfinderwebserver;
+
+--
+-- Name: capacity_parameter; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE TABLE capacity_parameter (
+    id bigint NOT NULL,
+    application_id character varying(255) NOT NULL,
+    parameter character varying(255) NOT NULL
+);
+
+
+ALTER TABLE capacity_parameter OWNER TO pathfinderwebserver;
+
+--
+-- Name: capacity_parameter_id_seq; Type: SEQUENCE; Schema: public; Owner: pathfinderwebserver
+--
+
+CREATE SEQUENCE capacity_parameter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE capacity_parameter_id_seq OWNER TO pathfinderwebserver;
+
+--
+-- Name: capacity_parameter_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pathfinderwebserver
+--
+
+ALTER SEQUENCE capacity_parameter_id_seq OWNED BY capacity_parameter.id;
+
+
+--
 -- Name: cluster; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
 --
 
@@ -106,18 +155,62 @@ ALTER SEQUENCE commodity_id_seq OWNED BY commodity.id;
 
 
 --
--- Name: pathfinder_application; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+-- Name: customer; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
 --
 
-CREATE TABLE pathfinder_application (
-    id uuid NOT NULL,
-    name character varying(255),
-    token bytea,
-    cluster_id bigint
+CREATE TABLE customer (
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL
 );
 
 
-ALTER TABLE pathfinder_application OWNER TO pathfinderwebserver;
+ALTER TABLE customer OWNER TO pathfinderwebserver;
+
+--
+-- Name: objective_function; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE TABLE objective_function (
+    id character varying(255) NOT NULL,
+    function character varying(255)
+);
+
+
+ALTER TABLE objective_function OWNER TO pathfinderwebserver;
+
+--
+-- Name: objective_parameter; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE TABLE objective_parameter (
+    id bigint NOT NULL,
+    application_id character varying(255) NOT NULL,
+    parameter character varying(255) NOT NULL
+);
+
+
+ALTER TABLE objective_parameter OWNER TO pathfinderwebserver;
+
+--
+-- Name: objective_parameter_id_seq; Type: SEQUENCE; Schema: public; Owner: pathfinderwebserver
+--
+
+CREATE SEQUENCE objective_parameter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE objective_parameter_id_seq OWNER TO pathfinderwebserver;
+
+--
+-- Name: objective_parameter_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pathfinderwebserver
+--
+
+ALTER SEQUENCE objective_parameter_id_seq OWNED BY objective_parameter.id;
+
 
 --
 -- Name: play_evolutions; Type: TABLE; Schema: public; Owner: pathfinderwebserver; Tablespace: 
@@ -178,6 +271,13 @@ ALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: pathfinderwebserver
 --
 
+ALTER TABLE ONLY capacity_parameter ALTER COLUMN id SET DEFAULT nextval('capacity_parameter_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: pathfinderwebserver
+--
+
 ALTER TABLE ONLY cluster ALTER COLUMN id SET DEFAULT nextval('cluster_id_seq'::regclass);
 
 
@@ -192,7 +292,37 @@ ALTER TABLE ONLY commodity ALTER COLUMN id SET DEFAULT nextval('commodity_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: pathfinderwebserver
 --
 
+ALTER TABLE ONLY objective_parameter ALTER COLUMN id SET DEFAULT nextval('objective_parameter_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: pathfinderwebserver
+--
+
 ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::regclass);
+
+
+--
+-- Data for Name: application; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY application (id, name, customer_email, cluster_id, objective_function_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: capacity_parameter; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY capacity_parameter (id, application_id, parameter) FROM stdin;
+\.
+
+
+--
+-- Name: capacity_parameter_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
+--
+
+SELECT pg_catalog.setval('capacity_parameter_id_seq', 2, true);
 
 
 --
@@ -200,10 +330,6 @@ ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::r
 --
 
 COPY cluster (id, parent_id, authentication_token) FROM stdin;
-1	\N	\\x746f7020736563726574
-2	\N	\\x746f7020736563726574
-3	\N	\\x746f7020736563726574
-4	\N	\\x746f7020736563726574
 \.
 
 
@@ -211,7 +337,7 @@ COPY cluster (id, parent_id, authentication_token) FROM stdin;
 -- Name: cluster_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('cluster_id_seq', 4, true);
+SELECT pg_catalog.setval('cluster_id_seq', 5, true);
 
 
 --
@@ -219,10 +345,6 @@ SELECT pg_catalog.setval('cluster_id_seq', 4, true);
 --
 
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, cluster_id) FROM stdin;
-1	39.3875000000000028	-87.1106000000000051	39.7160000000000011	-86.2964000000000055	0	{"capacity":1}	1
-2	39.8019999999999996	-86.2789999999999964	41.5827999999999989	-87.3462999999999994	0	{"capacity":1}	1
-3	39.1694999999999993	-86.5185000000000031	39.2072999999999965	-85.9244000000000057	0	{"capacity":1}	1
-4	42.5844000000000023	-88.4770000000000039	41.8534000000000006	-87.6518999999999977	0	{"capacity":1}	1
 \.
 
 
@@ -230,16 +352,41 @@ COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, st
 -- Name: commodity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('commodity_id_seq', 6, true);
+SELECT pg_catalog.setval('commodity_id_seq', 1, false);
 
 
 --
--- Data for Name: pathfinder_application; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+-- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY pathfinder_application (id, name, token, cluster_id) FROM stdin;
-9c4166bb-9535-49e1-8844-1904a0b1f45b	Chimney Swap	\\xefbfbdefbfbdefbfbdefbfbd0a2aefbfbdefbfbd55efbfbd6750efbfbd45efbfbd5befbfbd7333efbfbd27efbfbd34efbfbd14efbfbd51efbfbd524eefbfbd70efbfbd7defbfbd317a173334341912efbfbdefbfbd6defbfbd073befbfbd00efbfbdefbfbdefbfbdefbfbd6c5e6c1defbfbd30efbfbdefbfbd2fefbfbdefbfbd3defbfbd77efbfbd271909efbfbdefbfbd5aefbfbd3307efbfbd3befbfbdefbfbdefbfbd7f527512efbfbd1843efbfbd7fefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd4fefbfbdefbfbdefbfbd7365efbfbdefbfbd49efbfbd7f1c171eefbfbd3e4fefbfbdefbfbdefbfbdefbfbd724e526232422defbfbdefbfbd3257efbfbdefbfbdefbfbd5b59efbfbd643b6befbfbd1eefbfbdefbfbd21efbfbdefbfbdefbfbd237cefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd5befbfbd5d6eefbfbd08efbfbdefbfbdefbfbd3c72efbfbdefbfbdefbfbdefbfbd77efbfbdefbfbd76efbfbd73efbfbd2cefbfbdefbfbdefbfbdefbfbdefbfbdefbfbd7465efbfbd70efbfbdefbfbdefbfbd23efbfbd4a7aefbfbdefbfbdefbfbd26efbfbd752f2aefbfbdefbfbdefbfbd15efbfbd7defbfbd35efbfbdefbfbd0aefbfbdefbfbdefbfbd7506efbfbd5aefbfbd1eefbfbdefbfbd5f187515efbfbd2849efbfbd5800efbfbdefbfbdefbfbd7c102966efbfbd5befbfbdefbfbdefbfbd4cefbfbdefbfbdefbfbdefbfbd134e	1
+COPY customer (email, password) FROM stdin;
+adam@ajmichael.net	password
 \.
+
+
+--
+-- Data for Name: objective_function; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY objective_function (id, function) FROM stdin;
+MIN_DIST	sum{distances[k1,k2]*x[k1,k2,i],k1=RA,k2=RA,i=VA}
+MIN_TIME	sum{durations[k1,k2]*x[k1,k2,i],k1=RA,k2=RA,i=VA}
+\.
+
+
+--
+-- Data for Name: objective_parameter; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY objective_parameter (id, application_id, parameter) FROM stdin;
+\.
+
+
+--
+-- Name: objective_parameter_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
+--
+
+SELECT pg_catalog.setval('objective_parameter_id_seq', 3, true);
 
 
 --
@@ -247,7 +394,7 @@ COPY pathfinder_application (id, name, token, cluster_id) FROM stdin;
 --
 
 COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, last_problem) FROM stdin;
-1	f332ff093c2b2b9a09d3b618c76764badc063d17	2015-12-12 00:00:00	SET search_path = public, pg_catalog;\n\nSET default_tablespace = '';\n\nSET default_with_oids = false;\n\nCREATE TABLE cluster (\nid bigint NOT NULL,\nparent_id bigint,\nauthentication_token bytea\n);\n\n\nALTER TABLE cluster OWNER TO pathfinderwebserver;\n\n\nCREATE SEQUENCE cluster_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE cluster_id_seq OWNER TO pathfinderwebserver;\n\n\nALTER SEQUENCE cluster_id_seq OWNED BY cluster.id;\n\n\nCREATE TABLE commodity (\nid bigint NOT NULL,\nstartlatitude double precision NOT NULL,\nstartlongitude double precision NOT NULL,\nendlatitude double precision NOT NULL,\nendlongitude double precision NOT NULL,\nstatus integer NOT NULL,\nmetadata json,\ncluster_id bigint,\nCONSTRAINT ck_commodity_status CHECK ((status = ANY (ARRAY[3, 0, 1, 4, 2])))\n);\n\n\nALTER TABLE commodity OWNER TO pathfinderwebserver;\n\nCREATE SEQUENCE commodity_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;\n\nALTER SEQUENCE commodity_id_seq OWNED BY commodity.id;\n\n\nCREATE TABLE pathfinder_application (\nid uuid NOT NULL,\nname character varying(255),\ntoken bytea,\ncluster_id bigint\n);\n\n\nALTER TABLE pathfinder_application OWNER TO pathfinderwebserver;\n\nCREATE TABLE pathfinder_user (\nusername character varying(255) NOT NULL,\npassword character varrying(255) NOT NULL,\nuser_token bytea NOT NULL\n);\n\n\nALTER TABLE pathfinder_user OWNER TO pathfinderwebserver;\n\nCREATE SEQUENCE pathfinder_user_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\nALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;\n\nALTER SEQUENCE commodity_id_seq OWNED BY pathfinder_user.id;\n\n\nCREATE TABLE vehicle (\nid bigint NOT NULL,\nlatitude double precision NOT NULL,\nlongitude double precision NOT NULL,\ncluster_id bigint,\nstatus integer NOT NULL,\nmetadata json,\nCONSTRAINT ck_vehicle_status CHECK ((status = ANY (ARRAY[0, 1])))\n);\n\n\nALTER TABLE vehicle OWNER TO pathfinderwebserver;\n\nCREATE SEQUENCE vehicle_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE vehicle_id_seq OWNER TO pathfinderwebserver;\n\nALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.id;\n\n\nALTER TABLE ONLY cluster ALTER COLUMN id SET DEFAULT nextval('cluster_id_seq'::regclass);\n\n\nALTER TABLE ONLY commodity ALTER COLUMN id SET DEFAULT nextval('commodity_id_seq'::regclass);\n\n\nALTER TABLE ONLY pathfinder_user ALTER COLUMN id set DEFAULT nextval('pathfinder_user_id_seq'::regclass);\n\n\nALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::regclass);\n\n\nSELECT pg_catalog.setval('cluster_id_seq', 1, false);\n\nSELECT pg_catalog.setval('commodity_id_seq', 1, false);\n\nSELECT pg_catalog.setval('pathfinder_user_id_seq', 1, false);\n\nSELECT pg_catalog.setval('vehicle_id_seq', 1, false);\n\n\nALTER TABLE ONLY cluster\nADD CONSTRAINT pk_cluster PRIMARY KEY (id);\n\n\nALTER TABLE ONLY commodity\nADD CONSTRAINT pk_commodity PRIMARY KEY (id);\n\n\nALTER TABLE ONLY pathfinder_application\nADD CONSTRAINT pk_pathfinder_application PRIMARY KEY (id);\n\nALTER TABLE ONLY pathfinder_user\nADD CONSTRAINT pk_pathfinder_user PRIMARY KEY (id);\n\nALTER TABLE ONLY vehicle\nADD CONSTRAINT pk_vehicle PRIMARY KEY (id);\n\n\nCREATE INDEX ix_cluster_parent_id ON cluster USING btree (parent_id);\n\n\nCREATE INDEX ix_commodity_cluster_id ON commodity USING btree (cluster_id);\n\n\nCREATE INDEX ix_pathfinder_application_cluster_id ON pathfinder_application USING btree (cluster_id);\n\n\nCREATE INDEX ix_vehicle_cluster_id ON vehicle USING btree (cluster_id);\n\n\n\nALTER TABLE ONLY cluster\nADD CONSTRAINT fk_cluster_parent_id FOREIGN KEY (parent_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\nALTER TABLE ONLY commodity\nADD CONSTRAINT fk_commodity_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\nALTER TABLE ONLY pathfinder_application\nADD CONSTRAINT fk_pathfinder_application_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\nALTER TABLE ONLY vehicle\nADD CONSTRAINT fk_vehicle_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;	alter table cluster drop constraint if exists fk_cluster_parent_id;\ndrop index if exists ix_cluster_parent_id;\n\nalter table commodity drop constraint if exists fk_commodity_cluster_id;\ndrop index if exists ix_commodity_cluster_id;\n\nalter table pathfinder_application drop constraint if exists fk_pathfinder_application_cluster_id;\ndrop index if exists ix_pathfinder_application_cluster_id;\n\nalter table vehicle drop constraint if exists fk_vehicle_cluster_id;\ndrop index if exists ix_vehicle_cluster_id;\n\ndrop table if exists cluster;\n\ndrop table if exists commodity;\n\ndrop table if exists pathfinder_application;\n\ndrop table if exists pathfinder_user;\n\ndrop table if exists vehicle;	applied	ERROR: relation "cluster" already exists [ERROR:0, SQLSTATE:42P07]
+1	d32c4d0a542c9372608b715c0294c38aee975d9d	2016-01-09 00:00:00	SET search_path = public, pg_catalog;\n\nSET default_tablespace = '';\n\nSET default_with_oids = false;\n\nCREATE TABLE cluster (\nid bigint NOT NULL,\nparent_id bigint,\nauthentication_token bytea\n);\n\n\nALTER TABLE cluster OWNER TO pathfinderwebserver;\n\n\nCREATE SEQUENCE cluster_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE cluster_id_seq OWNER TO pathfinderwebserver;\n\n\nALTER SEQUENCE cluster_id_seq OWNED BY cluster.id;\n\n\nCREATE TABLE commodity (\nid bigint NOT NULL,\nstartlatitude double precision NOT NULL,\nstartlongitude double precision NOT NULL,\nendlatitude double precision NOT NULL,\nendlongitude double precision NOT NULL,\nstatus integer NOT NULL,\nmetadata json,\ncluster_id bigint,\nCONSTRAINT ck_commodity_status CHECK ((status = ANY (ARRAY[3, 0, 1, 4, 2])))\n);\n\n\nALTER TABLE commodity OWNER TO pathfinderwebserver;\n\nCREATE SEQUENCE commodity_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;\n\nALTER SEQUENCE commodity_id_seq OWNED BY commodity.id;\n\n\nALTER TABLE commodity_id_seq OWNER TO pathfinderwebserver;\n\n\nCREATE TABLE vehicle (\nid bigint NOT NULL,\nlatitude double precision NOT NULL,\nlongitude double precision NOT NULL,\ncluster_id bigint,\nstatus integer NOT NULL,\nmetadata json,\nCONSTRAINT ck_vehicle_status CHECK ((status = ANY (ARRAY[0, 1])))\n);\n\n\nALTER TABLE vehicle OWNER TO pathfinderwebserver;\n\nCREATE SEQUENCE vehicle_id_seq\nSTART WITH 1\nINCREMENT BY 1\nNO MINVALUE\nNO MAXVALUE\nCACHE 1;\n\n\nALTER TABLE vehicle_id_seq OWNER TO pathfinderwebserver;\n\nALTER SEQUENCE vehicle_id_seq OWNED BY vehicle.id;\n\n\nALTER TABLE ONLY cluster ALTER COLUMN id SET DEFAULT nextval('cluster_id_seq'::regclass);\n\n\nALTER TABLE ONLY commodity ALTER COLUMN id SET DEFAULT nextval('commodity_id_seq'::regclass);\n\n\nALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::regclass);\n\nSELECT pg_catalog.setval('cluster_id_seq', 1, false);\n\nSELECT pg_catalog.setval('commodity_id_seq', 1, false);\n\nSELECT pg_catalog.setval('vehicle_id_seq', 1, false);\n\n\nALTER TABLE ONLY cluster\nADD CONSTRAINT pk_cluster PRIMARY KEY (id);\n\n\nALTER TABLE ONLY commodity\nADD CONSTRAINT pk_commodity PRIMARY KEY (id);\n\n\nALTER TABLE ONLY vehicle\nADD CONSTRAINT pk_vehicle PRIMARY KEY (id);\n\n\nCREATE INDEX ix_cluster_parent_id ON cluster USING btree (parent_id);\n\n\nCREATE INDEX ix_commodity_cluster_id ON commodity USING btree (cluster_id);\n\n\nCREATE INDEX ix_vehicle_cluster_id ON vehicle USING btree (cluster_id);\n\n\nALTER TABLE ONLY cluster\nADD CONSTRAINT fk_cluster_parent_id FOREIGN KEY (parent_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\nALTER TABLE ONLY commodity\nADD CONSTRAINT fk_commodity_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\nALTER TABLE ONLY vehicle\nADD CONSTRAINT fk_vehicle_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;\n\n\ncreate table application (\nid                        varchar(255) not null,\nname                      varchar(255) not null,\ncustomer_email            varchar(255),\ncluster_id                bigint not null,\nobjective_function_id     varchar(255) not null,\nconstraint pk_application primary key (id))\n;\n\ncreate table capacity_parameter (\nid                        bigserial not null,\napplication_id            varchar(255) not null,\nparameter                 varchar(255) not null,\nconstraint pk_capacity_parameter primary key (id))\n;\n\ncreate table customer (\nemail                     varchar(255) not null,\npassword                  varchar(255) not null,\nconstraint pk_customer primary key (email))\n;\n\ncreate table objective_function (\nid                        varchar(255) not null,\nfunction                  varchar(255),\nconstraint pk_objective_function primary key (id))\n;\n\ncreate table objective_parameter (\nid                        bigserial not null,\napplication_id            varchar(255) not null,\nparameter                 varchar(255) not null,\nconstraint pk_objective_parameter primary key (id))\n;\n\nalter table application add constraint fk_application_customer_1 foreign key (customer_email) references customer (email);\ncreate index ix_application_customer_1 on application (customer_email);\nalter table application add constraint fk_application_objectiveFuncti_2 foreign key (objective_function_id) references objective_function (id);\ncreate index ix_application_objectiveFuncti_2 on application (objective_function_id);\nalter table capacity_parameter add constraint fk_capacity_parameter_applicat_3 foreign key (application_id) references application (id);\ncreate index ix_capacity_parameter_applicat_3 on capacity_parameter (application_id);\nalter table objective_parameter add constraint fk_objective_parameter_applica_4 foreign key (application_id) references application (id);\ncreate index ix_objective_parameter_applica_4 on objective_parameter (application_id);	alter table cluster drop constraint if exists fk_cluster_parent_id;\ndrop index if exists ix_cluster_parent_id;\n\nalter table commodity drop constraint if exists fk_commodity_cluster_id;\ndrop index if exists ix_commodity_cluster_id;\n\nalter table vehicle drop constraint if exists fk_vehicle_cluster_id;\ndrop index if exists ix_vehicle_cluster_id;\n\ndrop table if exists cluster;\n\ndrop table if exists commodity;\n\ndrop table if exists vehicle;\n\ndrop table if exists application cascade;\n\ndrop table if exists capacity_parameter cascade;\n\ndrop table if exists customer cascade;\n\ndrop table if exists objective_function cascade;\n\ndrop table if exists objective_parameter cascade;	applied	
 \.
 
 
@@ -256,8 +403,6 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 --
 
 COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
-14	39.4437130820373483	-87.3394701071896975	1	1	{"capacity":1}
-15	42.1863000000000028	-88.1088000000000022	1	1	{"capacity":1}
 \.
 
 
@@ -265,7 +410,23 @@ COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
 -- Name: vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('vehicle_id_seq', 16, true);
+SELECT pg_catalog.setval('vehicle_id_seq', 1, false);
+
+
+--
+-- Name: pk_application; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+ALTER TABLE ONLY application
+    ADD CONSTRAINT pk_application PRIMARY KEY (id);
+
+
+--
+-- Name: pk_capacity_parameter; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+ALTER TABLE ONLY capacity_parameter
+    ADD CONSTRAINT pk_capacity_parameter PRIMARY KEY (id);
 
 
 --
@@ -285,11 +446,27 @@ ALTER TABLE ONLY commodity
 
 
 --
--- Name: pk_pathfinder_application; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+-- Name: pk_customer; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
 --
 
-ALTER TABLE ONLY pathfinder_application
-    ADD CONSTRAINT pk_pathfinder_application PRIMARY KEY (id);
+ALTER TABLE ONLY customer
+    ADD CONSTRAINT pk_customer PRIMARY KEY (email);
+
+
+--
+-- Name: pk_objective_function; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+ALTER TABLE ONLY objective_function
+    ADD CONSTRAINT pk_objective_function PRIMARY KEY (id);
+
+
+--
+-- Name: pk_objective_parameter; Type: CONSTRAINT; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+ALTER TABLE ONLY objective_parameter
+    ADD CONSTRAINT pk_objective_parameter PRIMARY KEY (id);
 
 
 --
@@ -309,6 +486,27 @@ ALTER TABLE ONLY play_evolutions
 
 
 --
+-- Name: ix_application_customer_1; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE INDEX ix_application_customer_1 ON application USING btree (customer_email);
+
+
+--
+-- Name: ix_application_objectivefuncti_2; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE INDEX ix_application_objectivefuncti_2 ON application USING btree (objective_function_id);
+
+
+--
+-- Name: ix_capacity_parameter_applicat_3; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+--
+
+CREATE INDEX ix_capacity_parameter_applicat_3 ON capacity_parameter USING btree (application_id);
+
+
+--
 -- Name: ix_cluster_parent_id; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
 --
 
@@ -323,10 +521,10 @@ CREATE INDEX ix_commodity_cluster_id ON commodity USING btree (cluster_id);
 
 
 --
--- Name: ix_pathfinder_application_cluster_id; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
+-- Name: ix_objective_parameter_applica_4; Type: INDEX; Schema: public; Owner: pathfinderwebserver; Tablespace: 
 --
 
-CREATE INDEX ix_pathfinder_application_cluster_id ON pathfinder_application USING btree (cluster_id);
+CREATE INDEX ix_objective_parameter_applica_4 ON objective_parameter USING btree (application_id);
 
 
 --
@@ -334,6 +532,30 @@ CREATE INDEX ix_pathfinder_application_cluster_id ON pathfinder_application USIN
 --
 
 CREATE INDEX ix_vehicle_cluster_id ON vehicle USING btree (cluster_id);
+
+
+--
+-- Name: fk_application_customer_1; Type: FK CONSTRAINT; Schema: public; Owner: pathfinderwebserver
+--
+
+ALTER TABLE ONLY application
+    ADD CONSTRAINT fk_application_customer_1 FOREIGN KEY (customer_email) REFERENCES customer(email);
+
+
+--
+-- Name: fk_application_objectivefuncti_2; Type: FK CONSTRAINT; Schema: public; Owner: pathfinderwebserver
+--
+
+ALTER TABLE ONLY application
+    ADD CONSTRAINT fk_application_objectivefuncti_2 FOREIGN KEY (objective_function_id) REFERENCES objective_function(id);
+
+
+--
+-- Name: fk_capacity_parameter_applicat_3; Type: FK CONSTRAINT; Schema: public; Owner: pathfinderwebserver
+--
+
+ALTER TABLE ONLY capacity_parameter
+    ADD CONSTRAINT fk_capacity_parameter_applicat_3 FOREIGN KEY (application_id) REFERENCES application(id);
 
 
 --
@@ -353,11 +575,11 @@ ALTER TABLE ONLY commodity
 
 
 --
--- Name: fk_pathfinder_application_cluster_id; Type: FK CONSTRAINT; Schema: public; Owner: pathfinderwebserver
+-- Name: fk_objective_parameter_applica_4; Type: FK CONSTRAINT; Schema: public; Owner: pathfinderwebserver
 --
 
-ALTER TABLE ONLY pathfinder_application
-    ADD CONSTRAINT fk_pathfinder_application_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE ONLY objective_parameter
+    ADD CONSTRAINT fk_objective_parameter_applica_4 FOREIGN KEY (application_id) REFERENCES application(id);
 
 
 --
@@ -369,23 +591,13 @@ ALTER TABLE ONLY vehicle
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: postgres
+-- Name: public; Type: ACL; Schema: -; Owner: adam
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
+REVOKE ALL ON SCHEMA public FROM adam;
+GRANT ALL ON SCHEMA public TO adam;
 GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
--- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: -; Owner: pathfinderwebserver
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver REVOKE ALL ON TABLES  FROM PUBLIC;
-ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver REVOKE ALL ON TABLES  FROM pathfinderwebserver;
-ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver GRANT ALL ON TABLES  TO pathfinderwebserver;
-ALTER DEFAULT PRIVILEGES FOR ROLE pathfinderwebserver GRANT ALL ON TABLES  TO PUBLIC;
 
 
 --
