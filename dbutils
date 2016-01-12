@@ -3,6 +3,9 @@
 username="postgres"
 dbhost="162.222.177.187"
 dbname="pathfinderdb"
+#username="adam"
+#dbhost="localhost"
+#dbname="pathfinderwebserver"
 
 
 if [ $# -ne 1 ]

@@ -307,6 +307,7 @@ ALTER TABLE ONLY vehicle ALTER COLUMN id SET DEFAULT nextval('vehicle_id_seq'::r
 --
 
 COPY application (id, name, customer_email, cluster_id, objective_function_id) FROM stdin;
+9869bd06-12ec-451f-8207-2c5f217eb4d0	Chimney Swap	adam@ajmichael.net	999	MIN_DIST
 \.
 
 
@@ -330,6 +331,7 @@ SELECT pg_catalog.setval('capacity_parameter_id_seq', 2, true);
 --
 
 COPY cluster (id, parent_id, authentication_token) FROM stdin;
+999	\N	\\x746f7020736563726574
 \.
 
 
@@ -345,6 +347,9 @@ SELECT pg_catalog.setval('cluster_id_seq', 5, true);
 --
 
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, cluster_id) FROM stdin;
+1	39.3875000000000028	-87.1106000000000051	39.7160000000000011	-86.2964000000000055	0	{"capacity":1}	999
+2	39.8019999999999996	-86.2789999999999964	41.5827999999999989	-87.3462999999999994	0	{"capacity":1}	999
+4	42.5844000000000023	-88.4770000000000039	41.8534000000000006	-87.6518999999999977	0	{"capacity":1}	999
 \.
 
 
@@ -403,6 +408,8 @@ COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, 
 --
 
 COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
+14	39.4437130820373483	-87.3394701071896975	999	1	{"capacity":1}
+15	42.1863000000000028	-88.1088000000000022	999	1	{"capacity":1}
 \.
 
 
