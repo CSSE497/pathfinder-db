@@ -6,7 +6,6 @@ create table application (
   name                          varchar(255),
   customer_email                varchar(255),
   objective_function_id         varchar(255),
-  cluster_path                  varchar(255),
   constraint pk_application primary key (id)
 );
 
@@ -19,7 +18,6 @@ create table capacity_parameter (
 
 create table cluster (
   path                          varchar(255) not null,
-  authentication_token          bytea,
   constraint pk_cluster primary key (path)
 );
 
@@ -59,7 +57,7 @@ create table vehicle (
   id                            bigserial not null,
   latitude                      float not null,
   longitude                     float not null,
-  clusterpath                   varchar(255),
+  cluster_path                  varchar(255),
   status                        integer not null,
   metadata                      json,
   constraint ck_vehicle_status check (status in ('0','1')),
