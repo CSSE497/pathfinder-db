@@ -545,12 +545,12 @@ ALTER TABLE ONLY vehicle
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: hansondg
+-- Name: public; Type: ACL; Schema: -; Owner: pathfinderwebserver
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM hansondg;
-GRANT ALL ON SCHEMA public TO hansondg;
+REVOKE ALL ON SCHEMA public FROM pathfinderwebserver;
+GRANT ALL ON SCHEMA public TO pathfinderwebserver;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
