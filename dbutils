@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-username="postgres"
-dbhost="162.222.177.187"
+user="postgres"
+#dbhost="162.222.177.187"
 dbname="pathfinderdb"
-#dbhost="localhost"
-user="pathfinderwebserver"
+dbhost="localhost"
+#user="pathfinderwebserver"
 
 
 if [ $# -ne 1 ]
@@ -13,18 +13,34 @@ fi
 
 if [ $1 == "save" ]
 then
-	echo "drop schema public cascade;" > ./restore.sql
-	echo "create schema public;" >> ./restore.sql
-	pg_dump -h $dbhost -d $dbname -U $username >> ./restore.sql
+	pg_dump -a -h $dbhost -d $dbname -U $user >> ./restore.sql
 	echo "Database Saved"
 	exit
 fi
 
-if [ $1 == "restore" ]
-then
-	psql -h $dbhost -d $dbname -U $username < ./restore.sql
-	echo "Database Restored"
-	exit
+if [ $1 != "restore" ]
+then echo "usage: dbutils [restore|save]"; exit
 fi
 
-echo "usage: dbutils [restore|save]"; exit
+IFS='%'
+
+sql=`cat ./1.sql`
+regex='
+# --- !Ups
+
+(.*)
+# --- !Downs
+(.*)$'
+
+[[ $sql =~ $regex ]]
+up="${BASH_REMATCH[1]}"
+restore=`cat ./restore.sql`
+down="${BASH_REMATCH[2]}"
+restoreText="${down}
+${up}
+${restore}"
+echo $restoreText > query.sql
+psql -h $dbhost -d $dbname -U $user -f query.sql
+unset IFS
+echo "completed"
+
