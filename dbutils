@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-user="postgres"
-#dbhost="162.222.177.187"
+dbhost="162.222.177.187"
+#dbhost="localhost"
 dbname="pathfinderdb"
-dbhost="localhost"
-#user="pathfinderwebserver"
+user="pathfinderwebserver"
+#user="postgres"
 
 
 if [ $# -ne 1 ]
