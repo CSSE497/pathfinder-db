@@ -75,7 +75,7 @@ COPY cluster (id) FROM stdin;
 COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, cluster_id) FROM stdin;
 1	39.3875000000000028	-87.1106000000000051	39.7160000000000011	-86.2964000000000055	0	{"capacity":1}	9869bd06-12ec-451f-8207-2c5f217eb4d0
 2	39.8012000000000015	-86.2789999999999964	41.5827999999999989	-87.3462999999999994	0	{"capacity":1}	9869bd06-12ec-451f-8207-2c5f217eb4d0
-4	42.5844000000000023	-88.4770000000000039	41.8534000000000006	-87.6518999999999977	0	{"capacity":1}	9869bd06-12ec-451f-8207-2c5f217eb4d0
+3	42.5844000000000023	-88.4770000000000039	41.8534000000000006	-87.6518999999999977	0	{"capacity":1}	9869bd06-12ec-451f-8207-2c5f217eb4d0
 \.
 
 
@@ -83,7 +83,7 @@ COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, st
 -- Name: commodity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('commodity_id_seq', 1, false);
+SELECT pg_catalog.setval('commodity_id_seq', 4, false);
 
 
 --
@@ -105,8 +105,8 @@ SELECT pg_catalog.setval('objective_parameter_id_seq', 1, false);
 --
 
 COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
-14	39.4437130820373483	-87.3394701071896975	9869bd06-12ec-451f-8207-2c5f217eb4d0	0	{"capacity":1}
-15	42.1863000000000028	-88.1088000000000022	9869bd06-12ec-451f-8207-2c5f217eb4d0	0	{"capacity":1}
+1	39.4437130820373483	-87.3394701071896975	9869bd06-12ec-451f-8207-2c5f217eb4d0	0	{"capacity":1}
+2	42.1863000000000028	-88.1088000000000022	9869bd06-12ec-451f-8207-2c5f217eb4d0	0	{"capacity":1}
 \.
 
 
@@ -114,7 +114,7 @@ COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
 -- Name: vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('vehicle_id_seq', 1, false);
+SELECT pg_catalog.setval('vehicle_id_seq', 3, false);
 
 
 --
