@@ -31,6 +31,7 @@ create table commodity (
   metadata                      json,
   vehicle_id                    bigint,
   cluster_id                    varchar(255),
+  request_time                  timestamp,
   constraint ck_commodity_status check (status in ('3','0','1','4','2')),
   constraint pk_commodity primary key (id)
 );
