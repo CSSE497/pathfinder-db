@@ -6,9 +6,8 @@ dbname="pathfinderdb"
 user="pathfinderwebserver"
 #user="postgres"
 
-
 if [ $# -ne 1 ]
-then echo "usage: dbutils [restore|save]"; exit
+then echo "usage: dbutils [restore|save|data]"; exit
 fi
 
 if [ $1 == "save" ]
@@ -18,27 +17,33 @@ then
 	exit
 fi
 
-if [ $1 != "restore" ]
-then echo "usage: dbutils [restore|save]"; exit
-fi
-
 IFS='%'
 
-sql=`cat ./1.sql`
-regex='
-# --- !Ups
+if [ $1 == "restore" ]
+then
+	sql=`cat ./1.sql`
+	regex='
+	# --- !Ups
+	
+	(.*)
+	# --- !Downs
+	(.*)$'
 
-(.*)
-# --- !Downs
-(.*)$'
+	[[ $sql =~ $regex ]]
+	up="${BASH_REMATCH[1]}"
+	restore=`cat ./restore.sql`
+	down="${BASH_REMATCH[2]}"
+	restoreText="${down}
+	${up}
+	${restore}"
+elif [ $1 == "data" ]
+then
+	restoreText=`cat ./restore.sql`
+else
+	unset IFS
+	echo "usage: dbutils [restore|save|data]"; exit
+fi
 
-[[ $sql =~ $regex ]]
-up="${BASH_REMATCH[1]}"
-restore=`cat ./restore.sql`
-down="${BASH_REMATCH[2]}"
-restoreText="${down}
-${up}
-${restore}"
 echo $restoreText > query.sql
 psql -h $dbhost -d $dbname -U $user -f query.sql
 unset IFS
