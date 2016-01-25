@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
-dbhost="162.222.177.187"
-#dbhost="localhost"
+#dbhost="162.222.177.187"
+dbhost="localhost"
 dbname="pathfinderdb"
 user="pathfinderwebserver"
 #user="postgres"
 
 if [ $# -ne 1 ]
-then echo "usage: dbutils [restore|save|data]"; exit
+then echo "usage: dbutils [restore|save]"; exit
 fi
 
 if [ $1 == "save" ]
 then
+	pg_dump -t public.play_evolutions -h $dbhost -d $dbname -U $user --schema-only > ./restore.sql
 	pg_dump -a -h $dbhost -d $dbname -U $user >> ./restore.sql
 	echo "Database Saved"
 	exit
@@ -19,30 +20,25 @@ fi
 
 IFS='%'
 
-if [ $1 == "restore" ]
-then
-	sql=`cat ./1.sql`
-	regex='
-	# --- !Ups
-	
-	(.*)
-	# --- !Downs
-	(.*)$'
-
-	[[ $sql =~ $regex ]]
-	up="${BASH_REMATCH[1]}"
-	restore=`cat ./restore.sql`
-	down="${BASH_REMATCH[2]}"
-	restoreText="${down}
-	${up}
-	${restore}"
-elif [ $1 == "data" ]
-then
-	restoreText=`cat ./restore.sql`
-else
-	unset IFS
-	echo "usage: dbutils [restore|save|data]"; exit
+if [ $1 != "restore" ]
+then echo "usage: dbutils [restore|save]"; exit
 fi
+sql=`cat ./1.sql`
+regex='
+# --- !Ups
+
+(.*)
+# --- !Downs
+(.*)$'
+
+[[ $sql =~ $regex ]]
+up="${BASH_REMATCH[1]}"
+echo $up
+restore=`cat ./restore.sql`
+restoreText="drop schema public cascade; 
+create schema public;
+$up
+$restore"
 
 echo $restoreText > query.sql
 psql -h $dbhost -d $dbname -U $user -f query.sql
