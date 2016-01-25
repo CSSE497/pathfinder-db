@@ -44,7 +44,8 @@ create table customer (
 
 create table objective_function (
   id                            varchar(255) not null,
-  function                      varchar(255) not null,
+  dsl                           varchar(10000) not null,
+  function                      varchar(10000) not null,
   constraint pk_objective_function primary key (id)
 );
 

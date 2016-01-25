@@ -72,9 +72,9 @@ danielghanson93@gmail.com	password
 -- Data for Name: objective_function; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY objective_function (id, function) FROM stdin;
-MIN_DIST	sum{distances[k1,k2]*x[k1,k2,i],k1=RA,k2=RA,i=VA}
-MIN_TIME	sum{durations[k1,k2]*x[k1,k2,i],k1=RA,k2=RA,i=VA}
+COPY objective_function (id, dsl, function) FROM stdin;
+MIN_DIST	sense: min\ncontext:\n    method: sum\n    for:\n        t: transport\nquantity: t.distance\n	@defVar(model, _value, Int)\n@addConstraint(model, _value == sum{distance[t],t=TA})\n@setObjective(model, Min, _value)\n
+MIN_TIME	sense: min\ncontext:\n    method: sum\n    for:\n        t: transport\nquantity: t.duration\n	@defVar(model, _value, Int)\n@addConstraint(model, _value == sum{duration[t],t=TA})\n@setObjective(model, Min, _value)\n
 \.
 
 
