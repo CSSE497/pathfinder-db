@@ -38,7 +38,6 @@ create table commodity (
 
 create table customer (
   email                         varchar(255) not null,
-  password                      varchar(255) not null,
   constraint pk_customer primary key (email)
 );
 

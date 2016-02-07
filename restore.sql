@@ -61,10 +61,10 @@ SET search_path = public, pg_catalog;
 -- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY customer (email, password) FROM stdin;
-adam@ajmichael.net	password
-androidsampleapp@thepathfinder.com	tester
-danielghanson93@gmail.com	password
+COPY customer (email) FROM stdin;
+adam@ajmichael.net
+androidsampleapp@thepathfinder.com
+danielghanson93@gmail.com
 \.
 
 
