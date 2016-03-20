@@ -75,7 +75,7 @@ create table permission (
 );
 
 create table connection (
-  id                            varchar(255),
+  id                            varchar(255) not null,
   token                         json,
   constraint pk_connection primary key (id)
 );
