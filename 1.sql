@@ -70,13 +70,13 @@ create table vehicle (
 create table permission (
   email                         varchar(255) not null,
   application_id                varchar(255) not null,
-  permission                    json not null,
+  permissions                   json not null,
   constraint pk_permission primary key (email, application_id)
 );
 
 create table connection (
   id                            varchar(255) not null,
-  token                         json,
+  token                         bytea,
   constraint pk_connection primary key (id)
 );
 
