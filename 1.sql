@@ -6,6 +6,7 @@ create table application (
   name                          varchar(255),
   customer_email                varchar(255),
   objective_function_id         varchar(255),
+  auth_url                      varchar(255) default 'https://auth.thepathfinder.xyz/connection',
   key                           bytea,
   constraint pk_application primary key (id)
 );
