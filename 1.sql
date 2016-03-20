@@ -6,6 +6,7 @@ create table application (
   name                          varchar(255),
   customer_email                varchar(255),
   objective_function_id         varchar(255),
+  key                           bytea,
   constraint pk_application primary key (id)
 );
 
@@ -66,6 +67,19 @@ create table vehicle (
   constraint pk_vehicle primary key (id)
 );
 
+create table permission (
+  email                         varchar(255) not null,
+  application_id                varchar(255) not null,
+  permission                    json not null,
+  constraint pk_permission primary key (email, application_id)
+);
+
+create table connection (
+  id                            varchar(255),
+  token                         json,
+  constraint pk_connection primary key (id)
+);
+
 alter table application add constraint fk_application_customer_email foreign key (customer_email) references customer (email) on delete restrict on update restrict;
 create index ix_application_customer_email on application (customer_email);
 
@@ -83,6 +97,9 @@ create index ix_objective_parameter_application_id on objective_parameter (appli
 
 alter table vehicle add constraint fk_vehicle_cluster_id foreign key (cluster_id) references cluster (id) on delete restrict on update restrict;
 create index ix_vehicle_cluster_id on vehicle (cluster_id);
+
+alter table permission add constraint fk_permission_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
+create index ix_permission_application_id on permission (application_id);
 
 
 # --- !Downs
@@ -111,6 +128,9 @@ drop index if exists ix_objective_parameter_application_id;
 alter table vehicle drop constraint if exists fk_vehicle_cluster_id;
 drop index if exists ix_vehicle_cluster_id;
 
+alter table permission drop constraint if exists fk_permission_application_id;
+drop index if exists ix_permission_application_id on permission (application_id);
+
 drop table if exists application cascade;
 
 drop table if exists capacity_parameter cascade;
@@ -129,3 +149,6 @@ drop table if exists objective_parameter cascade;
 
 drop table if exists vehicle cascade;
 
+drop table if exists permission cascade;
+
+drop table if exists connextion cascade;
