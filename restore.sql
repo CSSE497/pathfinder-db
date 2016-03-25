@@ -41,6 +41,16 @@ ALTER TABLE ONLY play_evolutions
 
 
 --
+-- Name: play_evolutions; Type: ACL; Schema: public; Owner: pathfinderwebserver
+--
+
+REVOKE ALL ON TABLE play_evolutions FROM PUBLIC;
+REVOKE ALL ON TABLE play_evolutions FROM pathfinderwebserver;
+GRANT ALL ON TABLE play_evolutions TO pathfinderwebserver;
+GRANT ALL ON TABLE play_evolutions TO PUBLIC;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -82,11 +92,11 @@ MIN_TIME	sense: min\ncontext:\n    method: sum\n    for:\n        t: transport\n
 -- Data for Name: application; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY application (id, name, customer_email, objective_function_id) FROM stdin;
-9869bd06-12ec-451f-8207-2c5f217eb4d0	Chimney Swap	adam@ajmichael.net	MIN_DIST
-7d8f2ead-ee48-45ef-8314-3c5bebd4db82	This is a thing	adam@ajmichael.net	MIN_DIST
-2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	MyTestCluster	androidsampleapp@thepathfinder.com	MIN_DIST
-64bf2f19-7e6e-48e8-8c50-42dbda195785	my-test-app	danielghanson93@gmail.com	MIN_DIST
+COPY application (id, name, customer_email, objective_function_id, auth_url, key) FROM stdin;
+9869bd06-12ec-451f-8207-2c5f217eb4d0	Chimney Swap	adam@ajmichael.net	MIN_DIST	https://auth.thepathfinder.xyz/connection	\N
+7d8f2ead-ee48-45ef-8314-3c5bebd4db82	This is a thing	adam@ajmichael.net	MIN_DIST	https://auth.thepathfinder.xyz/connection	\N
+2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	MyTestCluster	androidsampleapp@thepathfinder.com	MIN_DIST	https://auth.thepathfinder.xyz/connection	\N
+64bf2f19-7e6e-48e8-8c50-42dbda195785	my-test-app	danielghanson93@gmail.com	MIN_DIST	https://auth.thepathfinder.xyz/connection	\N
 \.
 
 
@@ -119,10 +129,21 @@ COPY cluster (id) FROM stdin;
 
 
 --
+-- Data for Name: vehicle; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY transport (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
+6	39.4814530000000019	-87.3209329999999966	2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	1	{"capacity":2}
+2	42.1863000000000028	-88.1088000000000022	9869bd06-12ec-451f-8207-2c5f217eb4d0	1	{"capacity":1}
+1	39.4437130820373483	-87.3394701071896975	9869bd06-12ec-451f-8207-2c5f217eb4d0	1	{"capacity":1}
+\.
+
+
+--
 -- Data for Name: commodity; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, vehicle_id, cluster_id, request_time) FROM stdin;
+COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, status, metadata, transport_id, cluster_id, request_time) FROM stdin;
 17	39.4711360000000013	-87.3776210000000049	39.4656670000000034	-87.381857999999994	2	{"capacity":1}	\N	2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	2016-01-24 19:53:22.484
 18	39.4700160000000011	-87.383964000000006	39.4695150000000012	-87.3870139999999935	2	{"capacity":1}	\N	2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	2016-01-24 19:53:35.994
 23	39.4699999999999989	-87.3700000000000045	39.7000000000000028	-87.3799999999999955	2	{}	\N	64bf2f19-7e6e-48e8-8c50-42dbda195785	2016-01-24 20:00:40.339
@@ -137,6 +158,14 @@ COPY commodity (id, startlatitude, startlongitude, endlatitude, endlongitude, st
 --
 
 SELECT pg_catalog.setval('commodity_id_seq', 23, true);
+
+
+--
+-- Data for Name: connection; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+--
+
+COPY connection (id, token) FROM stdin;
+\.
 
 
 --
@@ -156,30 +185,20 @@ SELECT pg_catalog.setval('objective_parameter_id_seq', 1, true);
 
 
 --
--- Data for Name: play_evolutions; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
+-- Data for Name: permission; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
 --
 
-COPY play_evolutions (id, hash, applied_at, apply_script, revert_script, state, last_problem) FROM stdin;
-1	bb3e8e635e7954bce4ab39a7f2d480abccbd96f3	2016-01-23 00:00:00	create table application (\nid                            varchar(255) not null,\nname                          varchar(255),\ncustomer_email                varchar(255),\nobjective_function_id         varchar(255),\nconstraint pk_application primary key (id)\n);\n\ncreate table capacity_parameter (\nid                            bigserial not null,\napplication_id                varchar(255) not null,\nparameter                     varchar(255) not null,\nconstraint pk_capacity_parameter primary key (id)\n);\n\ncreate table cluster (\nid                            varchar(255) not null,\nconstraint pk_cluster primary key (id)\n);\n\ncreate table commodity (\nid                            bigserial not null,\nstartlatitude                 float not null,\nstartlongitude                float not null,\nendlatitude                   float not null,\nendlongitude                  float not null,\nstatus                        integer not null,\nmetadata                      json,\nvehicle_id                    bigint,\ncluster_id                    varchar(255),\nconstraint ck_commodity_status check (status in ('3','0','1','4','2')),\nconstraint pk_commodity primary key (id)\n);\n\ncreate table customer (\nemail                         varchar(255) not null,\npassword                      varchar(255) not null,\nconstraint pk_customer primary key (email)\n);\n\ncreate table objective_function (\nid                            varchar(255) not null,\nfunction                      varchar(255) not null,\nconstraint pk_objective_function primary key (id)\n);\n\ncreate table objective_parameter (\nid                            bigserial not null,\napplication_id                varchar(255) not null,\nparameter                     varchar(255) not null,\nconstraint pk_objective_parameter primary key (id)\n);\n\ncreate table vehicle (\nid                            bigserial not null,\nlatitude                      float not null,\nlongitude                     float not null,\ncluster_id                    varchar(255),\nstatus                        integer not null,\nmetadata                      json,\nconstraint ck_vehicle_status check (status in ('0','1')),\nconstraint pk_vehicle primary key (id)\n);\n\nalter table application add constraint fk_application_customer_email foreign key (customer_email) references customer (email) on delete restrict on update restrict;\ncreate index ix_application_customer_email on application (customer_email);\n\nalter table application add constraint fk_application_objective_function_id foreign key (objective_function_id) references objective_function (id) on delete restrict on update restrict;\ncreate index ix_application_objective_function_id on application (objective_function_id);\n\nalter table capacity_parameter add constraint fk_capacity_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;\ncreate index ix_capacity_parameter_application_id on capacity_parameter (application_id);\n\nalter table commodity add constraint fk_commodity_vehicle_id foreign key (vehicle_id) references vehicle (id) on delete restrict on update restrict;\ncreate index ix_commodity_vehicle_id on commodity (vehicle_id);\n\nalter table objective_parameter add constraint fk_objective_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;\ncreate index ix_objective_parameter_application_id on objective_parameter (application_id);\n\nalter table vehicle add constraint fk_vehicle_cluster_id foreign key (cluster_id) references cluster (id) on delete restrict on update restrict;\ncreate index ix_vehicle_cluster_id on vehicle (cluster_id);	alter table application drop constraint if exists fk_application_customer_email;\ndrop index if exists ix_application_customer_email;\n\nalter table application drop constraint if exists fk_application_objective_function_id;\ndrop index if exists ix_application_objective_function_id;\n\nalter table application drop constraint if exists fk_application_cluster_id;\ndrop index if exists ix_application_cluster_id;\n\nalter table capacity_parameter drop constraint if exists fk_capacity_parameter_application_id;\ndrop index if exists ix_capacity_parameter_application_id;\n\nalter table commodity drop constraint if exists fk_commodity_vehicle_id;\ndrop index if exists ix_commodity_vehicle_id;\n\nalter table commodity drop constraint if exists fk_commodity_cluster_id;\ndrop index if exists ix_commodity_cluster_id;\n\nalter table objective_parameter drop constraint if exists fk_objective_parameter_application_id;\ndrop index if exists ix_objective_parameter_application_id;\n\nalter table vehicle drop constraint if exists fk_vehicle_cluster_id;\ndrop index if exists ix_vehicle_cluster_id;\n\ndrop table if exists application cascade;\n\ndrop table if exists capacity_parameter cascade;\n\ndrop table if exists capacity_parameter cascade;\n\ndrop table if exists cluster cascade;\n\ndrop table if exists commodity cascade;\n\ndrop table if exists customer cascade;\n\ndrop table if exists objective_function cascade;\n\ndrop table if exists objective_parameter cascade;\n\ndrop table if exists vehicle cascade;	applied	ERROR: relation "application" already exists [ERROR:0, SQLSTATE:42P07]
+COPY permission (email, application_id, permissions) FROM stdin;
+danielghanson93@gmail.com	7d8f2ead-ee48-45ef-8314-3c5bebd4db82	[]
+danielghanson93@gmail.com	2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	[]
+danielghanson93@gmail.com	9869bd06-12ec-451f-8207-2c5f217eb4d0	[]
 \.
-
-
---
--- Data for Name: vehicle; Type: TABLE DATA; Schema: public; Owner: pathfinderwebserver
---
-
-COPY vehicle (id, latitude, longitude, cluster_id, status, metadata) FROM stdin;
-6	39.4814530000000019	-87.3209329999999966	2e465a65-6c2b-4eaf-ae48-bd5f4ac209b8	1	{"capacity":2}
-2	42.1863000000000028	-88.1088000000000022	9869bd06-12ec-451f-8207-2c5f217eb4d0	1	{"capacity":1}
-1	39.4437130820373483	-87.3394701071896975	9869bd06-12ec-451f-8207-2c5f217eb4d0	1	{"capacity":1}
-\.
-
 
 --
 -- Name: vehicle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pathfinderwebserver
 --
 
-SELECT pg_catalog.setval('vehicle_id_seq', 6, true);
+SELECT pg_catalog.setval('transport_id_seq', 6, true);
 
 
 --

@@ -57,7 +57,7 @@ create table objective_parameter (
   constraint pk_objective_parameter primary key (id)
 );
 
-create table tranport (
+create table transport (
   id                            bigserial not null,
   latitude                      float not null,
   longitude                     float not null,
