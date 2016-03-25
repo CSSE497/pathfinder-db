@@ -31,10 +31,10 @@ create table commodity (
   endlongitude                  float not null,
   status                        integer not null,
   metadata                      json,
-  vehicle_id                    bigint,
+  transport_id                  bigint,
   cluster_id                    varchar(255),
   request_time                  timestamp,
-  constraint ck_commodity_status check (status in ('3','0','1','4','2')),
+  constraint ck_commodity_status check (status in ('0','1','2','3','4')),
   constraint pk_commodity primary key (id)
 );
 
@@ -57,15 +57,15 @@ create table objective_parameter (
   constraint pk_objective_parameter primary key (id)
 );
 
-create table vehicle (
+create table tranport (
   id                            bigserial not null,
   latitude                      float not null,
   longitude                     float not null,
   cluster_id                    varchar(255),
   status                        integer not null,
   metadata                      json,
-  constraint ck_vehicle_status check (status in ('0','1')),
-  constraint pk_vehicle primary key (id)
+  constraint ck_transport_status check (status in ('0','1')),
+  constraint pk_transport primary key (id)
 );
 
 create table permission (
@@ -90,14 +90,14 @@ create index ix_application_objective_function_id on application (objective_func
 alter table capacity_parameter add constraint fk_capacity_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
 create index ix_capacity_parameter_application_id on capacity_parameter (application_id);
 
-alter table commodity add constraint fk_commodity_vehicle_id foreign key (vehicle_id) references vehicle (id) on delete restrict on update restrict;
-create index ix_commodity_vehicle_id on commodity (vehicle_id);
+alter table commodity add constraint fk_commodity_transport_id foreign key (transport_id) references transport (id) on delete restrict on update restrict;
+create index ix_commodity_transport_id on commodity (transport_id);
 
 alter table objective_parameter add constraint fk_objective_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
 create index ix_objective_parameter_application_id on objective_parameter (application_id);
 
-alter table vehicle add constraint fk_vehicle_cluster_id foreign key (cluster_id) references cluster (id) on delete restrict on update restrict;
-create index ix_vehicle_cluster_id on vehicle (cluster_id);
+alter table transport add constraint fk_transport_cluster_id foreign key (cluster_id) references cluster (id) on delete restrict on update restrict;
+create index ix_transport_cluster_id on transport (cluster_id);
 
 alter table permission add constraint fk_permission_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
 create index ix_permission_application_id on permission (application_id);
@@ -117,8 +117,8 @@ drop index if exists ix_application_cluster_id;
 alter table capacity_parameter drop constraint if exists fk_capacity_parameter_application_id;
 drop index if exists ix_capacity_parameter_application_id;
 
-alter table commodity drop constraint if exists fk_commodity_vehicle_id;
-drop index if exists ix_commodity_vehicle_id;
+alter table commodity drop constraint if exists fk_commodity_transport_id;
+drop index if exists ix_commodity_transport_id;
 
 alter table commodity drop constraint if exists fk_commodity_cluster_id;
 drop index if exists ix_commodity_cluster_id;
@@ -126,8 +126,8 @@ drop index if exists ix_commodity_cluster_id;
 alter table objective_parameter drop constraint if exists fk_objective_parameter_application_id;
 drop index if exists ix_objective_parameter_application_id;
 
-alter table vehicle drop constraint if exists fk_vehicle_cluster_id;
-drop index if exists ix_vehicle_cluster_id;
+alter table transport drop constraint if exists fk_transport_cluster_id;
+drop index if exists ix_transport_cluster_id;
 
 alter table permission drop constraint if exists fk_permission_application_id;
 drop index if exists ix_permission_application_id on permission (application_id);
@@ -149,6 +149,8 @@ drop table if exists objective_function cascade;
 drop table if exists objective_parameter cascade;
 
 drop table if exists vehicle cascade;
+
+drop table if exists transport cascade;
 
 drop table if exists permission cascade;
 
