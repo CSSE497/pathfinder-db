@@ -81,25 +81,25 @@ create table connection (
   constraint pk_connection primary key (id)
 );
 
-alter table application add constraint fk_application_customer_email foreign key (customer_email) references customer (email) on delete restrict on update restrict;
+alter table application add constraint fk_application_customer_email foreign key (customer_email) references customer (email) on delete cascade on update restrict;
 create index ix_application_customer_email on application (customer_email);
 
-alter table application add constraint fk_application_objective_function_id foreign key (objective_function_id) references objective_function (id) on delete restrict on update restrict;
+alter table application add constraint fk_application_objective_function_id foreign key (objective_function_id) references objective_function (id) on delete cascade on update restrict;
 create index ix_application_objective_function_id on application (objective_function_id);
 
-alter table capacity_parameter add constraint fk_capacity_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
+alter table capacity_parameter add constraint fk_capacity_parameter_application_id foreign key (application_id) references application (id) on delete cascade on update restrict;
 create index ix_capacity_parameter_application_id on capacity_parameter (application_id);
 
-alter table commodity add constraint fk_commodity_transport_id foreign key (transport_id) references transport (id) on delete restrict on update restrict;
+alter table commodity add constraint fk_commodity_transport_id foreign key (transport_id) references transport (id) on delete cascade on update restrict;
 create index ix_commodity_transport_id on commodity (transport_id);
 
-alter table objective_parameter add constraint fk_objective_parameter_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
+alter table objective_parameter add constraint fk_objective_parameter_application_id foreign key (application_id) references application (id) on delete cascade on update restrict;
 create index ix_objective_parameter_application_id on objective_parameter (application_id);
 
-alter table transport add constraint fk_transport_cluster_id foreign key (cluster_id) references cluster (id) on delete restrict on update restrict;
+alter table transport add constraint fk_transport_cluster_id foreign key (cluster_id) references cluster (id) on delete cascade on update restrict;
 create index ix_transport_cluster_id on transport (cluster_id);
 
-alter table permission add constraint fk_permission_application_id foreign key (application_id) references application (id) on delete restrict on update restrict;
+alter table permission add constraint fk_permission_application_id foreign key (application_id) references application (id) on delete cascade on update restrict;
 create index ix_permission_application_id on permission (application_id);
 
 

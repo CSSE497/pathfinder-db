@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#dbhost="162.222.177.187"
-dbhost="localhost"
+dbhost="db.thepathfinder.xyz"
+#dbhost="localhost"
 dbname="pathfinderdb"
 user="pathfinderwebserver"
 #user="postgres"
